@@ -30,12 +30,15 @@ class MainActivity : AppCompatActivity() {
 
         this.BtVer = findViewById(R.id.BtVer)
         this.tvDia = findViewById(R.id.tvDia)
+
+
+        this.BtVer.setOnClickListener(ClickBotao())
     }
     inner class ClickBotao: View.OnClickListener{
         override fun onClick(p0: View?){
-            var dia = this@MainActivity.etDia.text.toString()
-            var mes = this@MainActivity.etMes.text.toString()
-            var ano = this@MainActivity.etAno.text.toString()
+            var dia = this@MainActivity.etDia.text.toString().toInt()
+            var mes = this@MainActivity.etMes.text.toString().toInt()
+            var ano = this@MainActivity.etAno.text.toString().toInt()
             this@MainActivity.tvDia.text = VerDiaDaSemana(dia, mes, ano).diaDaSemana()
 
         }
