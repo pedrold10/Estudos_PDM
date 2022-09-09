@@ -1,50 +1,67 @@
 package com.example.uiarrocha
 
+import android.util.Log
+import com.example.uiarrocha.Status
+import java.io.Serializable
 import java.util.*
-import javax.net.ssl.SSLEngineResult
 import kotlin.random.Random
 
-abstract class Arrocha {
+class Arrocha : Serializable {
     private var maior: Int
     private var menor: Int
     private var secreto: Int
     private var status: Status
 
-    init{
+    init {
         var random = Random(Calendar.getInstance().timeInMillis)
-        this.menor= 2
-        this.maior= 99
-        this.secreto= random.nextInt(this.menor+1, this.menor-1)
+        this.menor = 1
+        this.maior = 100
+        // gerar número aleatório
+        this.secreto = random.nextInt(this.menor + 1, this.maior)
+        // Exibir no log o valor sorteado e o intervalo inicial
+        Log.i("APP_ARROCHA", this.secreto.toString())
+        Log.w("APP_ARROCHA", "(${this.menor},${this.maior})")
         this.status = Status.EXECUTANDO
     }
+
     fun jogar(chute: Int): String?{
-        var msg = ""
-        if(this.status != Status.EXECUTANDO){
-            if ((chute == this.secreto) || this.validaIntervalo(chute))
+        var msg = "Fim de jogo"
+
+        if (this.status == Status.EXECUTANDO){
+            if ((chute == this.secreto) || (!this.isValido(chute))){
                 this.status = Status.PERDEU
-            else{
-                if(chute < this.secreto){
-                    msg = "O número é menor do que o secreto"
+            }else{
+                // atualizar o intervalo
+                if (chute < this.secreto) {
                     this.menor = chute
-                }
-                else {
-                    msg = "O número é maior do que o secreto"
+                    msg = "O número é menor do que o secreto!"
+                } else {
                     this.maior = chute
+                    msg = "O número é maior do que o secreto!"
                 }
-                if(this.isArrochado()){
+
+                // Exibir no log o valor sorteado e o intervalo atualizado
+                Log.w("APP_ARROCHA", "(${this.menor},${this.maior})")
+
+                if (this.isArrochado()){
                     this.status = Status.GANHOU
-                }
-                else{
+                }else{
                     return msg
                 }
             }
         }
-        return null
+        return msg
     }
-    private fun validaIntervalo(chute: Int): Boolean{
+
+    private fun isValido(chute: Int): Boolean{
         return chute > this.menor && chute < this.maior
     }
-    fun isArrochado(): Boolean{
+
+    private fun isArrochado(): Boolean{
         return menor + 1 == maior - 1
+    }
+
+    fun getStatus(): Status{
+        return this.status
     }
 }
